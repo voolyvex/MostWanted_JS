@@ -67,7 +67,7 @@ function mainMenu(person, people) {
             //! TODO #1: Utilize the displayPerson function //////////////////////////////////////////
             // HINT: Look for a person-object stringifier utility function to help
             let personInfo = displayPerson(person[0]);
-            alert(personInfo);
+            return personInfo;
             break;
         case "family":
             //! TODO #2: Declare a findPersonFamily function //////////////////////////////////////////
@@ -88,6 +88,10 @@ function mainMenu(person, people) {
         case "quit":
             // Stop application execution
             return;
+
+        case "test":
+            let result = findSiblings(person[0], people)
+            console.log(result);
         default:
             // Prompt user again. Another instance of recursion
             return mainMenu(person, people);
@@ -146,8 +150,6 @@ function displayPerson(person) {
     personInfo += `Weight: ${person.weight}\n`;
     personInfo += `Eye Color: ${person.eyeColor}\n`;
     personInfo += `Occupation: ${person.occupation}\n`;
-    personInfo += `Parents: ${person.parents}\n`;
-    personInfo += `ID: ${person.id}\n`;
 
     //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
     alert(personInfo);
@@ -193,3 +195,39 @@ function chars(input) {
 
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
+
+function findPersonFamily(person, people) {
+    let results;
+    let parentId = person.parents;
+    results += findParents(person, people);
+    results += findSpouse(person, people);
+    if (parentId[0]) {
+        results += findSiblings(parentId, people);   
+    }
+    return displayPeople(results);
+}
+
+
+function findSpouse(person, people) {
+    
+}
+function findSiblings(parentId, people) {
+    debugger; 
+    let foundSibling = people.filter(function (element) {
+        return element.parents.includes(parentId[0]) || element.parents.includes(parentId[1]);
+    })
+    return foundSibling;
+}
+function findParents(person, people) {
+    let foundParents = people.filter(function (element) {
+        return person.parents.includes(element.id);
+        }
+    );
+    return foundParents;
+}
+
+
+
+function findPersonDescendants(person, people) {
+    
+}
