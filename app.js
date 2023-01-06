@@ -73,7 +73,7 @@ function mainMenu(person, people) {
             //! TODO #2: Declare a findPersonFamily function //////////////////////////////////////////
             // HINT: Look for a people-collection stringifier utility function to help
             let personFamily = findPersonFamily(person[0], people);
-            alert(personFamily);
+            return displayPeople(personFamily);
             break;
         case "descendants":
             //! TODO #3: Declare a findPersonDescendants function //////////////////////////////////////////
@@ -90,8 +90,10 @@ function mainMenu(person, people) {
             return;
 
         case "test":
-            let result = findSiblings(person[0], people)
-            console.log(result);
+            // let result = findSpouse(person[0], people)
+            // displayResult(findSpouse);
+            // console.log(result);
+            break;
         default:
             // Prompt user again. Another instance of recursion
             return mainMenu(person, people);
@@ -128,8 +130,8 @@ function searchByName(people) {
 function displayPeople(people) {
     alert(
         people
-            .map(function (person) {
-                return `${person.firstName} ${person.lastName}`;
+            .map(function (person, index) {
+                return `${person[index].firstName} ${person[index].lastName}`;
             })
             .join("\n")
     );
@@ -197,37 +199,39 @@ function chars(input) {
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
 
 function findPersonFamily(person, people) {
-    let results;
-    let parentId = person.parents;
-    results += findParents(person, people);
-    results += findSpouse(person, people);
-    if (parentId[0]) {
-        results += findSiblings(parentId, people);   
+    const results = [];
+    const spouseId = person.currentSpouse;
+    const parentId = person.parents;
+    if (typeof spouseId == 'number') {
+        results.push(findSpouse(person, people));
     }
-    return displayPeople(results);
-}
+    if (parentId[0]) {
+         results.push(findSiblings(parentId, people));   
+         results.push(findParents(parentId, people));
+    }
+    return results;
 
+}
 
 function findSpouse(person, people) {
-    
+    let foundSpouse = people
+        .filter(element => element.id === person.currentSpouse);
+    return foundSpouse;
 }
+
 function findSiblings(parentId, people) {
-    debugger; 
-    let foundSibling = people.filter(function (element) {
-        return element.parents.includes(parentId[0]) || element.parents.includes(parentId[1]);
-    })
-    return foundSibling;
+    let foundSiblings = people
+        .filter(element => element.parents.includes(parentId[0]) || element.parents.includes(parentId[1]));
+    return foundSiblings;
 }
-function findParents(person, people) {
-    let foundParents = people.filter(function (element) {
-        return person.parents.includes(element.id);
-        }
-    );
+
+function findParents(people, parentId) {
+    let foundParents = people
+        .filter(element => element.id === parentId[0] || element.id === parentId[1]);
     return foundParents;
 }
 
-
-
 function findPersonDescendants(person, people) {
-    
-}
+    alert('This is the findPersonDescendants function');
+    return;
+};
