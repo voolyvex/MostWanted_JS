@@ -1,2 +1,2 @@
 # MostWanted_JS
-website demonstrating use of JavaScript callbacks and higher order array methods to search and filter data
+This website demonstrates the use of JavaScript callbacks and higher order array methods to search and filter data
