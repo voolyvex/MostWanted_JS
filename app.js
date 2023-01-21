@@ -211,7 +211,6 @@ function findPersonFamily(person, people) {
         results += `Parents found:\n${(findParents(parentId, people))}`;
     }
     return results;
-
 }
 
 function findSpouse(spouseId, people) {
@@ -268,4 +267,137 @@ function findPersonDescendants(person, people){
         }}
 
     return personDescendants;
+}
+
+function searchByTraits(people){
+    let searchResults = people;
+    while(searchResults.length === 0 || searchResults.length > 1){
+        let searchTrait = promptFor(
+            'What trait do you want to search by: gender, dob, height, weight, eye color, occupation or return to main menu', chars);
+        switch(searchTrait){
+            case 'main menu':
+                return app(people);
+            case 'gender':
+                searchResults = getGender(searchResults)
+                if(searchResults.length != 0){
+                    alert(getResults(searchResults))
+                    break;
+                }
+                else;
+                return searchByTraits(people);
+
+            case 'dob':
+                searchResults = getDOB(searchResults)
+                if(searchResults.length != 0){
+                    alert(getResults(searchResults))
+                    break;
+                }
+                else;
+                return searchByTraits(people);
+            case 'height':
+                searchResults = getHeight(searchResults)
+                if(searchResults.length != 0){
+                    alert(getResults(searchResults))
+                    break;
+                }
+                else;
+                return searchByTraits(people);
+            case 'weight':
+                searchResults = getWeight(searchResults)
+                if(searchResults.length != 0){
+                    alert(getResults(searchResults))
+                    break;
+                }
+                else;
+                return searchByTraits(people);
+            case 'eye color':
+                searchResults = getEyeColor(searchResults)
+                if(searchResults.length != 0){
+                    alert(getResults(searchResults))
+                    break;
+                }
+                else;
+                return searchByTraits(people);
+            case 'occupation':
+                searchResults = getOccupation(searchResults)
+                if(searchResults.length != 0){
+                    alert(getResults(searchResults))
+                    break;
+                }
+                else;
+                return searchByTraits(people);
+            default:
+                return app(people);        
+        }
+    }
+    return searchResults;
+    
+    
+}
+function getGender(people){
+    let searchPrompt = promptFor(
+        'Male or Female:', chars)
+    
+    let searchResults = people.filter(function(people){
+        if(people.gender === searchPrompt){
+            return true;
+        }
+    })
+    return searchResults;
+
+}
+function getDOB(people){
+    let searchPrompt = promptFor(
+        'Enter the date of birth:', chars
+    )
+    let searchResults = people.filter(function(people){
+        if(people.dob === searchPrompt){
+            return true;
+        }
+    })
+    return searchResults;
+}
+function getHeight(people){
+    let searchPrompt = promptFor(
+        'Enter the Height:', chars
+    )
+    let searchResults = people.filter(function(people){
+        if(people.height === searchPrompt){
+            return true;
+        }
+    })
+    return searchResults;
+}
+function getWeight(people){
+    let searchPrompt = promptFor(
+        'Enter the Weight:', chars
+    )
+    let searchResults = people.filter(function(people){
+        if(people.weight === searchPrompt){
+            return true;
+        }
+    })
+    return searchResults;
+}
+function getEyeColor(people){
+    let searchPrompt = promptFor(
+        'Enter the Eye Color:\navailable eye color: blue, brown, black, green, hazel', chars
+    )
+    let searchResults = people.filter(function(people){
+        if(people.eyeColor === searchPrompt){
+            return true;
+        }
+    })
+    return searchResults;
+}
+function getOccupation(people){
+    let searchPrompt = promptFor(
+        'Enter the occupation:\navailable occupations: programmer, assistant, landscaper, nurse, student, architect, doctor, politician', chars
+    )
+    let searchResults = people.filter(function(people){
+        if(people.occupation === searchPrompt){
+            return true;
+        }
+    })
+    return searchResults;
 }
