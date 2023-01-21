@@ -73,7 +73,7 @@ function mainMenu(person, people) {
             //! TODO #2: Declare a findPersonFamily function //////////////////////////////////////////
             // HINT: Look for a people-collection stringifier utility function to help
             let personFamily = findPersonFamily(person[0], people);
-            return displayPeople(personFamily);
+            alert(personFamily);
             break;
         case "descendants":
             //! TODO #3: Declare a findPersonDescendants function //////////////////////////////////////////
@@ -88,12 +88,6 @@ function mainMenu(person, people) {
         case "quit":
             // Stop application execution
             return;
-
-        case "test":
-            // let result = findSpouse(person[0], people)
-            // displayResult(findSpouse);
-            // console.log(result);
-            break;
         default:
             // Prompt user again. Another instance of recursion
             return mainMenu(person, people);
@@ -130,8 +124,8 @@ function searchByName(people) {
 function displayPeople(people) {
     alert(
         people
-            .map(function (person, index) {
-                return `${person[index].firstName} ${person[index].lastName}`;
+            .map(function (person) {
+                return `${person.firstName} ${person.lastName}`;
             })
             .join("\n")
     );
@@ -199,29 +193,36 @@ function chars(input) {
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
 
 function findPersonFamily(person, people) {
-    const results = [];
+    let results = '';
     const spouseId = person.currentSpouse;
     const parentId = person.parents;
     if (typeof spouseId == 'number') {
-        results.push(findSpouse(person, people));
+        let spouseResult = findSpouse(spouseId, people);
+        results += `Spouse found:\n${spouseResult[0].firstName} ${spouseResult[0].lastName}`;
     }
-    if (parentId[0]) {
-         results.push(findSiblings(parentId, people));   
-         results.push(findParents(parentId, people));
+    else {
+        results += 'No spouse found';
+    }
+    if (parentId.length === 0) {
+        results += '\nNo parents found\nNo siblings found'
+    }
+    else {
+        results += `${(findSiblings(parentId, people))}`;   
+        results += `Parents found:\n${(findParents(parentId, people))}`;
     }
     return results;
 
 }
 
-function findSpouse(person, people) {
+function findSpouse(spouseId, people) {
     let foundSpouse = people
-        .filter(element => element.id === person.currentSpouse);
+        .filter(element => element.id === spouseId);
     return foundSpouse;
 }
 
-function findSiblings(parentId, people) {
+function findSiblings(parentId, person, people) {
     let foundSiblings = people
-        .filter(element => element.parents.includes(parentId[0]) || element.parents.includes(parentId[1]));
+        .filter(element => (element.parents.includes(parentId[0]) || element.parents.includes(parentId[1])) && (element.id !== person.id));
     return foundSiblings;
 }
 
@@ -231,7 +232,40 @@ function findParents(people, parentId) {
     return foundParents;
 }
 
-function findPersonDescendants(person, people) {
-    alert('This is the findPersonDescendants function');
-    return;
-};
+function findPersonDescendants(person, people){
+    let foundGrandChildren = [];
+    let foundChildren = people.filter(function(persona){
+        for(let i = 0; i < persona.parents.length; i++){
+            if(person.id === persona.parents[i]){
+                let foundChild = persona;
+                let grandChildren = people.filter(function(persona){
+                    for(let j = 0; j < persona.parents.length; j++){
+                        if(foundChild.id === persona.parents[j]){
+                            foundGrandChildren.push(persona);
+                            return true;
+                        }     
+                    }  
+                })
+                return true;
+            }
+        }
+    })
+    let personDescendants = '';
+    if(foundChildren.length === 0){
+        personDescendants += "No children found\n";
+    }
+    else{
+        personDescendants += `Children found:\n${foundChildren[0].firstName} ${foundChildren[0].lastName}\n`;
+        for(let i = 1; i < foundChildren.length; i++){
+            personDescendants += `${foundChildren[i].firstName} ${foundChildren[i].lastName}\n`;     
+            }}
+    if(foundGrandChildren.length === 0){
+            personDescendants += "\nNo grandchildren found";
+        }
+    else{
+        for(let i = 0; i < foundGrandChildren.length; i++){
+            personDescendants += `\nGrandchildren found:\n${foundGrandChildren[i].firstName} ${foundGrandChildren[i].lastName}\n`;     
+        }}
+
+    return personDescendants;
+}
