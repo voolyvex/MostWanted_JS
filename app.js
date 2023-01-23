@@ -1,8 +1,3 @@
-/*
-    Author: devCodeCamp
-    Description: Most Wanted Starter Code
-*/
-//////////////////////////////////////////* Beginning Of Starter Code *//////////////////////////////////////////
 
 "use strict";
 //? Utilize the hotkey to hide block level comment documentation
@@ -11,8 +6,7 @@
 
 /**
  * This is the main logic function being called in index.html.
- * It operates as the entry point for our entire application and allows
- * our user to decide whether to search by name or by traits.
+ * It allows user to decide whether to search by name or by traits.
  * @param {Array} people        A collection of person objects.
  */
 function app(people) {
@@ -104,13 +98,8 @@ function mainMenu(person, people) {
 function searchByName(people) {
     let firstName = promptFor("What is the person's first name?", chars);
     let lastName = promptFor("What is the person's last name?", chars);
-
     // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
-    let foundPerson = people.filter(function (person) {
-        if (person.firstName === firstName && person.lastName === lastName) {
-            return true;
-        }
-    });
+    let foundPerson = people.filter(person => person.firstName === firstName && person.lastName === lastName);
     return foundPerson;
 }
 // End of searchByName()
@@ -160,13 +149,22 @@ function displayPerson(person) {
  * @param {Function} valid      A callback function used to validate basic user input.
  * @returns {String}            The valid string input retrieved from the user.
  */
-function promptFor(question, valid) {
-    do {
-        var response = prompt(question).trim();
-    } while (!response || !valid(response));
+
+function promptFor(question) {
+    let response = prompt(question);
     return response;
 }
 // End of promptFor()
+
+/**
+ * This function capitalizes the first letter of a string.
+ * @param {String} input    The person's first or last name.
+ * @returns {String}        The name with the first letter capitalized.
+ */
+function capitalLetter(input){
+    return input.charAt(0).toUpperCase();
+}
+// End of capitalLetter()
 
 /**
  * This helper function checks to see if the value passed into input is a "yes" or "no."
@@ -179,13 +177,12 @@ function yesNo(input) {
 // End of yesNo()
 
 /**
- * This helper function operates as a default callback for promptFor's validation.
- * Feel free to modify this to suit your needs.
+ * This helper function removes white spaces and lowercases a string.
  * @param {String} input        A string.
- * @returns {Boolean}           Default validation -- no logic yet.
+ * @returns {String}            The string lowercased and with white spaces removed.
  */
 function chars(input) {
-    return true; // Default validation only
+    return input.toLowerCase().trim(); 
 }
 // End of chars()
 
@@ -194,21 +191,31 @@ function chars(input) {
 
 function findPersonFamily(person, people) {
     let results = '';
-    const spouseId = person.currentSpouse;
-    const parentId = person.parents;
+    let siblingResult;
+    let parentResult;
+    let duplicateResult = person.id;
+    let spouseId = person.currentSpouse;
+    let parentId = person.parents;
     if (typeof spouseId == 'number') {
         let spouseResult = findSpouse(spouseId, people);
-        results += `Spouse found:\n${spouseResult[0].firstName} ${spouseResult[0].lastName}`;
+        results += `Spouse found:  ${spouseResult[0].firstName} ${spouseResult[0].lastName}`;
     }
     else {
-        results += 'No spouse found';
+        results += 'No spouse found.';
     }
     if (parentId.length === 0) {
-        results += '\nNo parents found\nNo siblings found'
+        results += '\nNo parents found.\nNo siblings found.'
     }
     else {
-        results += `${(findSiblings(parentId, people))}`;   
-        results += `Parents found:\n${(findParents(parentId, people))}`;
+        siblingResult = findSiblings(parentId, people);
+        parentResult = findParents(parentId, people);
+        for (let sib of siblingResult) {
+        if (sib.id === duplicateResult) {continue;}
+        results += `\nSibling found:  ${sib.firstName} ${sib.lastName}`;
+        }
+        for (let i = 0; i < parentResult.length; i++) { 
+        results += `\nParent found:  ${parentResult[i].firstName} ${parentResult[i].lastName}`;
+        }
     }
     return results;
 }
@@ -219,9 +226,9 @@ function findSpouse(spouseId, people) {
     return foundSpouse;
 }
 
-function findSiblings(parentId, person, people) {
+function findSiblings(parentId, people) {
     let foundSiblings = people
-        .filter(element => (element.parents.includes(parentId[0]) || element.parents.includes(parentId[1])) && (element.id !== person.id));
+        .filter(element => element.parents.includes(parentId[0]) || element.parents.includes(parentId[1]));
     return foundSiblings;
 }
 
@@ -269,59 +276,67 @@ function findPersonDescendants(person, people){
     return personDescendants;
 }
 
+function displayResults(searchResults){
+    let displayString = `${searchResults[0].firstName} ${searchResults[0].lastName} has this trait.\n`;
+    for(let i = 1; i < searchResults.length; i++){
+        displayString += `${searchResults[0].firstName} ${searchResults[0].lastName} has this trait.\n`;
+    }
+    return displayString;
+}
 function searchByTraits(people){
-    let searchResults = people;
-    while(searchResults.length === 0 || searchResults.length > 1){
-        let searchTrait = promptFor(
-            'What trait do you want to search by: gender, dob, height, weight, eye color, occupation or return to main menu', chars);
+    let foundResults = [];
+    let searchTrait = promptFor(
+        'Enter the trait you want to search by: gender, dob, height, weight, eye color, occupation, or main menu to return to the main menu', chars);
+        
         switch(searchTrait){
             case 'main menu':
                 return app(people);
+
             case 'gender':
-                searchResults = getGender(searchResults)
-                if(searchResults.length != 0){
-                    alert(getResults(searchResults))
+                foundResults = getGender(people)
+                if(foundResults.length != 0){
+                    alert(displayResults(foundResults))
                     break;
                 }
-                else;
-                return searchByTraits(people);
-
+                else {
+                    return searchByTraits(people);
+                }
             case 'dob':
-                searchResults = getDOB(searchResults)
-                if(searchResults.length != 0){
-                    alert(getResults(searchResults))
+                foundResults = getDOB(people)
+                if(foundResults.length != 0){
+                    alert(displayResults(foundResults))
                     break;
                 }
                 else;
                 return searchByTraits(people);
             case 'height':
-                searchResults = getHeight(searchResults)
-                if(searchResults.length != 0){
-                    alert(getResults(searchResults))
+                foundResults = getHeight(people)
+                if(foundResults.length != 0){
+                    alert(displayResults(foundResults))
                     break;
                 }
                 else;
                 return searchByTraits(people);
             case 'weight':
-                searchResults = getWeight(searchResults)
-                if(searchResults.length != 0){
-                    alert(getResults(searchResults))
+                foundResults = getWeight(people)
+                if(foundResults.length != 0){
+                    alert(getResults(foundResults))
                     break;
                 }
                 else;
                 return searchByTraits(people);
             case 'eye color':
-                searchResults = getEyeColor(searchResults)
-                if(searchResults.length != 0){
-                    alert(getResults(searchResults))
+                foundResults = getEyeColor(people)
+                if(foundResults.length != 0){
+                    alert(displayResults(foundResults))
                     break;
                 }
                 else;
                 return searchByTraits(people);
             case 'occupation':
-                searchResults = getOccupation(searchResults)
-                if(searchResults.length != 0){
-                    alert(getResults(searchResults))
+                foundResults = getOccupation(people)
+                if(foundResults.length != 0){
+                    alert(displayResults(foundResults))
                     break;
                 }
                 else;
@@ -330,74 +345,36 @@ function searchByTraits(people){
                 return app(people);        
         }
     }
-    return searchResults;
-    
-    
-}
-function getGender(people){
-    let searchPrompt = promptFor(
-        'Male or Female:', chars)
-    
-    let searchResults = people.filter(function(people){
-        if(people.gender === searchPrompt){
-            return true;
-        }
-    })
-    return searchResults;
 
-}
-function getDOB(people){
-    let searchPrompt = promptFor(
-        'Enter the date of birth:', chars
-    )
-    let searchResults = people.filter(function(people){
-        if(people.dob === searchPrompt){
-            return true;
-        }
-    })
+function getGender(people) {
+    let searchPrompt = promptFor('Enter gender: (male or female)', chars);
+    let searchResults = people.filter(persona => people.gender === searchPrompt);
     return searchResults;
 }
-function getHeight(people){
-    let searchPrompt = promptFor(
-        'Enter the Height:', chars
-    )
-    let searchResults = people.filter(function(people){
-        if(people.height === searchPrompt){
-            return true;
-        }
-    })
+function getDOB(people) {
+    let searchPrompt = promptFor('Enter date of birth:', chars);
+    let searchResults = people.filter(persona => people.dob === searchPrompt);
     return searchResults;
 }
-function getWeight(people){
-    let searchPrompt = promptFor(
-        'Enter the Weight:', chars
-    )
-    let searchResults = people.filter(function(people){
-        if(people.weight === searchPrompt){
-            return true;
-        }
-    })
+function getHeight(people) {
+    let searchPrompt = promptFor('Enter height:', chars);
+    let searchResults = people.filter(persona => people.height === searchPrompt);
     return searchResults;
 }
-function getEyeColor(people){
-    let searchPrompt = promptFor(
-        'Enter the Eye Color:\navailable eye color: blue, brown, black, green, hazel', chars
-    )
-    let searchResults = people.filter(function(people){
-        if(people.eyeColor === searchPrompt){
-            return true;
-        }
-    })
+
+function getWeight(people) {
+    let searchPrompt = promptFor('Enter weight:', chars);
+    let searchResults = people.filter(persona => people.weight === searchPrompt);
     return searchResults;
 }
-function getOccupation(people){
+function getEyeColor(people) {
+    let searchPrompt = promptFor('Enter eye color: (blue, brown, black, green, or hazel)', chars);
+    let searchResults = people.filter(persona => people.eyeColor === searchPrompt);
+    return searchResults;
+}
+function getOccupation(people) {
     let searchPrompt = promptFor(
-        'Enter the occupation:\navailable occupations: programmer, assistant, landscaper, nurse, student, architect, doctor, politician', chars
-    )
-    let searchResults = people.filter(function(people){
-        if(people.occupation === searchPrompt){
-            return true;
-        }
-    })
+        'Enter the occupation: (programmer, assistant, landscaper, nurse, student, architect, doctor, or politician)', chars);
+    let searchResults = people.filter(persona => people.occupation === searchPrompt);
     return searchResults;
 }
