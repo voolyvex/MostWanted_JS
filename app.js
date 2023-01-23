@@ -204,17 +204,17 @@ function findPersonFamily(person, people) {
         results += 'No spouse found.';
     }
     if (parentId.length === 0) {
-        results += '\nNo parents found.\nNo siblings found.'
+        results += '\nNo parents found.\nNo siblings found.';
     }
     else {
-        siblingResult = findSiblings(parentId, people);
-        parentResult = findParents(parentId, people);
-        for (let sib of siblingResult) {
-        if (sib.id === duplicateResult) {continue;}
-        results += `\nSibling found:  ${sib.firstName} ${sib.lastName}`;
+        parentResult = findParents(parentId, people, duplicateResult);
+        for (let parent of parentResult) {
+            results += `\nParent found:  ${parent.firstName} ${parent.lastName}`;
         }
-        for (let i = 0; i < parentResult.length; i++) { 
-        results += `\nParent found:  ${parentResult[i].firstName} ${parentResult[i].lastName}`;
+        siblingResult = findSiblings(parentId, people);
+        for (let sib of siblingResult) {
+            if (sib.id === duplicateResult) {continue;}
+            results += `\nSibling found:  ${sib.firstName} ${sib.lastName}`;
         }
     }
     return results;
@@ -232,9 +232,9 @@ function findSiblings(parentId, people) {
     return foundSiblings;
 }
 
-function findParents(people, parentId) {
+function findParents(parentId, people, duplicateResult) {
     let foundParents = people
-        .filter(element => element.id === parentId[0] || element.id === parentId[1]);
+        .filter(element => element.id === parentId[0] || element.id === parentId[1] && element.id != duplicateResult);
     return foundParents;
 }
 
