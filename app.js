@@ -26,6 +26,7 @@ function app(people) {
             //! TODO #4: Declare a searchByTraits (multiple traits) function //////////////////////////////////////////
                 //! TODO #4a: Provide option to search for single or multiple //////////////////////////////////////////
             searchResults = searchByTraits(people);
+            app(people);
             break;
         default:
             // Re-initializes the app() if neither case was hit above. This is an instance of recursion.
@@ -150,21 +151,14 @@ function displayPerson(person) {
  * @returns {String}            The valid string input retrieved from the user.
  */
 
-function promptFor(question) {
-    let response = prompt(question);
+function promptFor(question, chars) {
+    do {var response = prompt(question).trim(); 
+    
+    } while (!response || !chars(response));
+
     return response;
 }
 // End of promptFor()
-
-/**
- * This function capitalizes the first letter of a string.
- * @param {String} input    The person's first or last name.
- * @returns {String}        The name with the first letter capitalized.
- */
-function capitalLetter(input){
-    return input.charAt(0).toUpperCase();
-}
-// End of capitalLetter()
 
 /**
  * This helper function checks to see if the value passed into input is a "yes" or "no."
@@ -182,7 +176,7 @@ function yesNo(input) {
  * @returns {String}            The string lowercased and with white spaces removed.
  */
 function chars(input) {
-    return input.toLowerCase().trim(); 
+    return true; 
 }
 // End of chars()
 
@@ -277,9 +271,9 @@ function findPersonDescendants(person, people){
 }
 
 function displayResults(searchResults){
-    let displayString = `${searchResults[0].firstName} ${searchResults[0].lastName} has this trait.\n`;
-    for(let i = 1; i < searchResults.length; i++){
-        displayString += `${searchResults[0].firstName} ${searchResults[0].lastName} has this trait.\n`;
+    let displayString = [];
+    for(let result of searchResults){
+        displayString += `${result.firstName} ${result.lastName} has this trait.\n`;
     }
     return displayString;
 }
@@ -348,33 +342,33 @@ function searchByTraits(people){
 
 function getGender(people) {
     let searchPrompt = promptFor('Enter gender: (male or female)', chars);
-    let searchResults = people.filter(persona => people.gender === searchPrompt);
+    let searchResults = people.filter((persona) => persona.gender === searchPrompt);
     return searchResults;
 }
 function getDOB(people) {
     let searchPrompt = promptFor('Enter date of birth:', chars);
-    let searchResults = people.filter(persona => people.dob === searchPrompt);
+    let searchResults = people.filter(persona => persona.dob === searchPrompt);
     return searchResults;
 }
 function getHeight(people) {
     let searchPrompt = promptFor('Enter height:', chars);
-    let searchResults = people.filter(persona => people.height === searchPrompt);
+    let searchResults = people.filter(persona => persona.height === searchPrompt);
     return searchResults;
 }
 
 function getWeight(people) {
     let searchPrompt = promptFor('Enter weight:', chars);
-    let searchResults = people.filter(persona => people.weight === searchPrompt);
+    let searchResults = people.filter(persona => persona.weight === searchPrompt);
     return searchResults;
 }
 function getEyeColor(people) {
     let searchPrompt = promptFor('Enter eye color: (blue, brown, black, green, or hazel)', chars);
-    let searchResults = people.filter(persona => people.eyeColor === searchPrompt);
+    let searchResults = people.filter(persona => persona.eyeColor === searchPrompt);
     return searchResults;
 }
 function getOccupation(people) {
     let searchPrompt = promptFor(
         'Enter the occupation: (programmer, assistant, landscaper, nurse, student, architect, doctor, or politician)', chars);
-    let searchResults = people.filter(persona => people.occupation === searchPrompt);
+    let searchResults = people.filter(persona => persona.occupation === searchPrompt);
     return searchResults;
 }
