@@ -62,13 +62,14 @@ function mainMenu(person, people) {
             //! TODO #1: Utilize the displayPerson function //////////////////////////////////////////
             // HINT: Look for a person-object stringifier utility function to help
             let personInfo = displayPerson(person[0]);
-            return personInfo;
+            app(people);
             break;
         case "family":
             //! TODO #2: Declare a findPersonFamily function //////////////////////////////////////////
             // HINT: Look for a people-collection stringifier utility function to help
             let personFamily = findPersonFamily(person[0], people);
             alert(personFamily);
+            app(people);
             break;
         case "descendants":
             //! TODO #3: Declare a findPersonDescendants function //////////////////////////////////////////
@@ -100,7 +101,7 @@ function searchByName(people) {
     let firstName = promptFor("What is the person's first name?", chars);
     let lastName = promptFor("What is the person's last name?", chars);
     // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
-    let foundPerson = people.filter(person => person.firstName === firstName && person.lastName === lastName);
+    let foundPerson = people.filter((person) => person.firstName === firstName && person.lastName === lastName);
     return foundPerson;
 }
 // End of searchByName()
@@ -216,19 +217,19 @@ function findPersonFamily(person, people) {
 
 function findSpouse(spouseId, people) {
     let foundSpouse = people
-        .filter(element => element.id === spouseId);
+        .filter((element) => element.id === spouseId);
     return foundSpouse;
 }
 
 function findSiblings(parentId, people) {
     let foundSiblings = people
-        .filter(element => element.parents.includes(parentId[0]) || element.parents.includes(parentId[1]));
+        .filter((element) => element.parents.includes(parentId[0]) || element.parents.includes(parentId[1]));
     return foundSiblings;
 }
 
 function findParents(parentId, people, duplicateResult) {
     let foundParents = people
-        .filter(element => element.id === parentId[0] || element.id === parentId[1] && element.id != duplicateResult);
+        .filter((element) => element.id === parentId[0] || element.id === parentId[1] && element.id != duplicateResult);
     return foundParents;
 }
 
@@ -280,7 +281,7 @@ function displayResults(searchResults){
 function searchByTraits(people){
     let foundResults = [];
     let searchTrait = promptFor(
-        'Enter the trait you want to search by: gender, dob, height, weight, eye color, occupation, or main menu to return to the main menu', chars);
+        "Enter the trait you want to search by: 'gender', 'dob', 'height', 'weight', 'eye color', 'occupation', or 'main menu' to return to the main menu", chars);
         
         switch(searchTrait){
             case 'main menu':
@@ -314,7 +315,7 @@ function searchByTraits(people){
             case 'weight':
                 foundResults = getWeight(people)
                 if(foundResults.length != 0){
-                    alert(getResults(foundResults))
+                    alert(displayResults(foundResults))
                     break;
                 }
                 else;
@@ -347,28 +348,28 @@ function getGender(people) {
 }
 function getDOB(people) {
     let searchPrompt = promptFor('Enter date of birth:', chars);
-    let searchResults = people.filter(persona => persona.dob === searchPrompt);
+    let searchResults = people.filter((persona) => persona.dob === searchPrompt);
     return searchResults;
 }
 function getHeight(people) {
     let searchPrompt = promptFor('Enter height:', chars);
-    let searchResults = people.filter(persona => persona.height === searchPrompt);
+    let searchResults = people.filter((persona) => persona.height === parseFloat(searchPrompt));
     return searchResults;
 }
 
 function getWeight(people) {
     let searchPrompt = promptFor('Enter weight:', chars);
-    let searchResults = people.filter(persona => persona.weight === searchPrompt);
+    let searchResults = people.filter((persona) => persona.weight === parseFloat(searchPrompt));
     return searchResults;
 }
 function getEyeColor(people) {
     let searchPrompt = promptFor('Enter eye color: (blue, brown, black, green, or hazel)', chars);
-    let searchResults = people.filter(persona => persona.eyeColor === searchPrompt);
+    let searchResults = people.filter((persona) => persona.eyeColor === searchPrompt);
     return searchResults;
 }
 function getOccupation(people) {
     let searchPrompt = promptFor(
         'Enter the occupation: (programmer, assistant, landscaper, nurse, student, architect, doctor, or politician)', chars);
-    let searchResults = people.filter(persona => persona.occupation === searchPrompt);
+    let searchResults = people.filter((persona) => persona.occupation === searchPrompt);
     return searchResults;
 }
