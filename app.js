@@ -23,11 +23,16 @@ function app(people) {
             searchResults = searchByName(people);
             break;
         case "no":
-            //! TODO #4: Declare a searchByTraits (multiple traits) function //////////////////////////////////////////
-                //! TODO #4a: Provide option to search for single or multiple //////////////////////////////////////////
-            searchResults = searchByTraits(people);
-            app(people);
-            break;
+            let traitPrompt = prompt("Enter 'multi' to search by multiple traits or 'single' to search by a single trait: ").toLowerCase();
+            switch (traitPrompt) {
+                case 'multi':
+                    searchResults = searchMultiTraits(people);
+                    break;
+                case 'single':
+                    searchResults = searchByTraits(people);
+                    app(people);
+                    break;
+            }
         default:
             // Re-initializes the app() if neither case was hit above. This is an instance of recursion.
             app(people);
@@ -372,4 +377,28 @@ function getOccupation(people) {
         'Enter the occupation: (programmer, assistant, landscaper, nurse, student, architect, doctor, or politician)', chars);
     let searchResults = people.filter((persona) => persona.occupation === searchPrompt);
     return searchResults;
+}
+
+function searchMultiTraits(people) {
+    let results = people;
+    let userConfirmed = false;
+    while (userConfirmed === false) {
+    let userInputProp = prompt("Enter the trait you would like to search by: ");
+    let userInputVal = prompt("Enter the value you would like to search by: ");
+    results = results.filter(function(el){
+        return el[userInputProp] === userInputVal;
+    })
+    if (results.length >= 1){
+         alert(displayResults(results));
+         let userContinue = prompt("Would you like to search an additional trait y/n: ")
+         if (userContinue === "n") {
+            userConfirmed = true
+         }
+    }
+    else if (results.length === 0){
+        alert("Sorry no results. Try again.")
+        return searchMultiTraits(people);
+    }    
+    }
+    return results;
 }
